@@ -42,8 +42,7 @@ def test_forward_pass():
     print("AURA-NET v3.0 - Forward Pass Test")
     print("=" * 80)
 
-    # Create model
-    print("\n[1] Creating model...")
+    # Create model    print("\n[1] Creating model...")
     model = AURANet(
         num_classes=80,
         feature_dim=256,
