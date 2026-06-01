@@ -442,29 +442,52 @@ def train_model(
     # Create datasets
     print("\nLoading datasets...")
 
+    # Get absolute paths
+    if 'path' in data_config and data_config['path']:
+        # If path is absolute
+        if Path(data_config['path']).is_absolute():
+            data_root = Path(data_config['path'])
+        else:
+            data_root = data_path / data_config['path']
+    else:
+        # Use yaml file directory as root
+        data_root = data_path
+
     # Parse train path
     train_path = data_config['train']
     if 'images' in train_path:
-        train_img_dir = data_path / train_path
-        train_label_dir = data_path / train_path.replace('images', 'labels')
+        train_img_dir = data_root / train_path
+        train_label_dir = data_root / train_path.replace('images', 'labels')
     else:
-        train_img_dir = data_path / train_path / 'images'
-        train_label_dir = data_path / train_path / 'labels'
+        train_img_dir = data_root / train_path / 'images'
+        train_label_dir = data_root / train_path / 'labels'
 
     # Parse val path
     val_path = data_config['val']
     if 'images' in val_path:
-        val_img_dir = data_path / val_path
-        val_label_dir = data_path / val_path.replace('images', 'labels')
+        val_img_dir = data_root / val_path
+        val_label_dir = data_root / val_path.replace('images', 'labels')
     else:
-        val_img_dir = data_path / val_path / 'images'
-        val_label_dir = data_path / val_path / 'labels'
+        val_img_dir = data_root / val_path / 'images'
+        val_label_dir = data_root / val_path / 'labels'
+
+    print(f"  Data root: {data_root}")
+    print(f"  Train images: {train_img_dir}")
+    print(f"  Train labels: {train_label_dir}")
+    print(f"  Val images: {val_img_dir}")
+    print(f"  Val labels: {val_label_dir}")
 
     train_dataset = YOLODataset(train_img_dir, train_label_dir, imgsz, augment=True)
     val_dataset = YOLODataset(val_img_dir, val_label_dir, imgsz, augment=False)
 
-    print(f"  Train: {len(train_dataset)} images")
+    print(f"\n  Train: {len(train_dataset)} images")
     print(f"  Val: {len(val_dataset)} images")
+
+    # Check if datasets are empty
+    if len(train_dataset) == 0:
+        raise ValueError(f"No training images found in {train_img_dir}. Please check your data.yaml paths.")
+    if len(val_dataset) == 0:
+        raise ValueError(f"No validation images found in {val_img_dir}. Please check your data.yaml paths.")
 
     # Create dataloaders
     train_loader = DataLoader(train_dataset, batch_size=batch, shuffle=True,
