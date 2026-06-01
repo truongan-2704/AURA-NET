@@ -1,0 +1,10 @@
+{
+  "num_samples": 20,
+  "num_classes": 80,
+  "image_size": [
+    640,
+    640
+  ],
+  "format": "YOLO",
+  "description": "Sample dataset for AURA-NET testing"
+}

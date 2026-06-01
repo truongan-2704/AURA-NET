@@ -1,0 +1,9 @@
+batch_size: 2
+data_dir: datasets/apple_leaft_detection
+device: auto
+epochs: 1
+img_size: 640
+lr: 0.0001
+resume: null
+save_dir: runs/apple_leaf
+workers: 0

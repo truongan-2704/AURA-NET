@@ -1,0 +1,109 @@
+# AURA-NET v2.0 Small Configuration
+# Target: ~8M params, ~18 GFLOPs for general purpose
+
+model:
+  name: 'aura_net_v2'
+  variant: 'small'
+  num_classes: 80
+  img_size: 640
+
+  # EACS Stem
+  stem:
+    edge_channels: 16
+    semantic_channels: 32
+    out_channels: 64
+
+  # CFPBlock Backbone
+  backbone:
+    channels: [64, 128, 256, 512]
+    num_blocks: [2, 3, 4, 2]
+    strides: [1, 2, 2, 2]
+
+  # ASMNeck
+  neck:
+    out_channels: 256
+
+  # CUPHead
+  head:
+    num_anchors: 1
+
+# Training
+train:
+  epochs: 300
+  batch_size: 32
+  lr: 0.01
+  momentum: 0.937
+  weight_decay: 0.0005
+  warmup_epochs: 5
+  warmup_momentum: 0.8
+  warmup_bias_lr: 0.1
+
+  # Optimizer
+  optimizer: 'SGD'
+  nesterov: true
+
+  # Scheduler
+  scheduler: 'cosine'
+  min_lr: 0.0001
+
+  # Loss weights
+  loss:
+    cls_weight: 1.0
+    box_weight: 0.05
+    unc_weight: 0.1
+    evidence_weight: 0.05
+
+  # EMA
+  ema:
+    enabled: true
+    decay: 0.9999
+
+  # Gradient clipping
+  grad_clip:
+    enabled: true
+    max_norm: 10.0
+
+  # Early stopping
+  early_stopping:
+    enabled: true
+    patience: 50
+    min_delta: 0.001
+    mode: 'max'
+
+# Data Augmentation
+augmentation:
+  mosaic: 1.0
+  mixup: 0.15
+  hsv_h: 0.015
+  hsv_s: 0.7
+  hsv_v: 0.4
+  degrees: 0.0
+  translate: 0.1
+  scale: 0.5
+  shear: 0.0
+  perspective: 0.0
+  flipud: 0.0
+  fliplr: 0.5
+
+# Validation
+val:
+  batch_size: 32
+  conf_thres: 0.001
+  iou_thres: 0.6
+  max_det: 300
+
+# Testing
+test:
+  batch_size: 32
+  conf_thres: 0.001
+  iou_thres: 0.6
+  max_det: 300
+  save_json: true
+  save_txt: false
+
+# Inference
+inference:
+  conf_thres: 0.25
+  iou_thres: 0.45
+  max_det: 300
+  uncertainty_gating: true

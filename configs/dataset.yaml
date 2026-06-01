@@ -1,0 +1,16 @@
+# Dataset configuration for YOLO format
+# Modify paths according to your dataset
+
+path: datasets/custom  # dataset root dir
+train: images/train  # train images (relative to 'path')
+val: images/val  # val images (relative to 'path')
+test: images/test  # test images (optional)
+
+# Classes
+nc: 10  # number of classes
+names: ['class0', 'class1', 'class2', 'class3', 'class4', 
+        'class5', 'class6', 'class7', 'class8', 'class9']
+
+# Example for custom dataset:
+# nc: 3
+# names: ['person', 'car', 'dog']

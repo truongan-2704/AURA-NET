@@ -1,0 +1,63 @@
+# AURA-Net Ultra-Lightweight Configuration
+# Target: <5G FLOPs, <1M params for edge devices
+
+model:
+  name: aura_net_nano
+  img_size: 416  # Smaller input size
+  num_classes: 10
+  width_mult: 0.25
+  top_k: 4
+  use_topk_inspector: false
+  
+  # Ultra-lightweight channels
+  channels:
+    stem: 16
+    local: 32
+    global: 48
+    decoder: 48
+  
+  # Architecture optimizations
+  optimizations:
+    convnext_blocks: 1  # Reduce from 2/3 to 1
+    gsm_blocks: 1  # Reduce from 2 to 1
+    freq_layers: 1  # Reduce from 2 to 1
+    expansion_ratio: 2  # Reduce from 4 to 2
+    use_depthwise: true  # Use depthwise separable everywhere
+    skip_detail_inspector: false  # Keep for accuracy
+    lightweight_router: true  # Simplified routing
+
+train:
+  epochs: 150
+  batch_size: 32
+  lr: 0.001
+  weight_decay: 0.0005
+  optimizer: adamw
+  scheduler: cosine
+  amp: true
+  device: auto
+  seed: 42
+  save_dir: runs/train
+  resume: null
+
+loss:
+  lambda_cls: 1.0
+  lambda_box: 5.0
+  lambda_iou: 2.0
+  lambda_obj: 1.0
+  lambda_region: 0.5  # Reduced
+  lambda_evidence: 0.3  # Reduced
+  lambda_uncertainty: 0.05  # Reduced
+  lambda_route: 0.02  # Reduced
+
+val:
+  batch_size: 64
+  conf_thres: 0.25
+  iou_thres: 0.45
+  max_det: 300
+
+infer:
+  conf_thres: 0.25
+  iou_thres: 0.45
+  max_det: 300
+  save_dir: runs/infer
+  visualize_evidence: true
