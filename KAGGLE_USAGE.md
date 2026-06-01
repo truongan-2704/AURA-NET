@@ -3,23 +3,56 @@
 
 ---
 
-## 🚀 Quick Start
+## ⚠️ IMPORTANT: Setup Path First!
 
-### **Import và khởi tạo model:**
+Trên Kaggle, bạn **PHẢI** thêm đường dẫn AURA-NET vào `sys.path` trước khi import:
 
 ```python
-# Cách 1: Import với underscore
-from models import AURANet_Nano, AURANet_Tiny, AURANet_S, AURANet_M, AURANet_L, AURANet_X
+import sys
 
-# Cách 2: Import không underscore (dễ gõ hơn)
-from models import AURANetNano, AURANetTiny, AURANetS, AURANetM, AURANetL, AURANetX
+# Add AURA-NET to Python path
+# Choose one based on where your code is:
 
-# Thêm train method
+# Option 1: If code is in /kaggle/working/AURA-NET
+sys.path.insert(0, '/kaggle/working/AURA-NET')
+
+# Option 2: If code is uploaded as Kaggle dataset
+# sys.path.insert(0, '/kaggle/input/aura-net-code/AURA-NET')
+
+# Option 3: If code is in current directory
+# sys.path.insert(0, '/kaggle/working')
+```
+
+---
+
+## 🚀 Quick Start
+
+### **Complete working example:**
+
+```python
+import sys
+
+# Step 1: Add to path
+sys.path.insert(0, '/kaggle/working/AURA-NET')
+
+# Step 2: Import
+from models import AURANetTiny
 from train_yaml import add_train_method
 
-# Chọn variant phù hợp với GPU của bạn
-add_train_method(AURANetTiny)
+# Step 3: Setup
+add_train_method()  # No arguments!
+
+# Step 4: Create model
 model = AURANetTiny(num_classes=9)
+
+# Step 5: Train
+model.train_model(
+    data="/kaggle/input/datasets/kcnttngotruongan/bccd-new/data.yaml",
+    epochs=250,
+    batch=24,
+    device=0,
+    lr0=2e-4
+)
 ```
 
 ---
@@ -46,10 +79,13 @@ model = AURANetTiny(num_classes=9)
 ### **1. AURA-NET-Nano (Ultra Fast)**
 
 ```python
+import sys
+sys.path.insert(0, '/kaggle/working/AURA-NET')
+
 from models import AURANetNano
 from train_yaml import add_train_method
 
-add_train_method(AURANetNano)
+add_train_method()
 model = AURANetNano(num_classes=9)
 
 model.train_model(
@@ -81,10 +117,13 @@ model.train_model(
 ### **2. AURA-NET-Tiny (Recommended for Kaggle)** ⭐
 
 ```python
+import sys
+sys.path.insert(0, '/kaggle/working/AURA-NET')
+
 from models import AURANetTiny
 from train_yaml import add_train_method
 
-add_train_method(AURANetTiny)
+add_train_method()
 model = AURANetTiny(num_classes=9)
 
 model.train_model(
@@ -113,10 +152,13 @@ model.train_model(
 ### **3. AURA-NET-S (Small)**
 
 ```python
+import sys
+sys.path.insert(0, '/kaggle/working/AURA-NET')
+
 from models import AURANetS
 from train_yaml import add_train_method
 
-add_train_method(AURANetS)
+add_train_method()
 model = AURANetS(num_classes=9)
 
 model.train_model(
@@ -145,10 +187,13 @@ model.train_model(
 ### **4. AURA-NET-M (Medium - Default)**
 
 ```python
+import sys
+sys.path.insert(0, '/kaggle/working/AURA-NET')
+
 from models import AURANetM
 from train_yaml import add_train_method
 
-add_train_method(AURANetM)
+add_train_method()
 model = AURANetM(num_classes=9)
 
 model.train_model(
@@ -180,10 +225,13 @@ model.train_model(
 ### **5. AURA-NET-L (Large - Optimized)**
 
 ```python
+import sys
+sys.path.insert(0, '/kaggle/working/AURA-NET')
+
 from models import AURANetL
 from train_yaml import add_train_method
 
-add_train_method(AURANetL)
+add_train_method()
 model = AURANetL(num_classes=9)
 
 model.train_model(
@@ -283,10 +331,13 @@ model.train_model(
 ### **Step 1: Quick experiment với Nano/Tiny**
 
 ```python
+import sys
+sys.path.insert(0, '/kaggle/working/AURA-NET')
+
 from models import AURANetTiny
 from train_yaml import add_train_method
 
-add_train_method(AURANetTiny)
+add_train_method()
 model = AURANetTiny(num_classes=9)
 
 # Quick training để test pipeline
@@ -301,10 +352,13 @@ model.train_model(
 ### **Step 2: Full training với S hoặc M**
 
 ```python
+import sys
+sys.path.insert(0, '/kaggle/working/AURA-NET')
+
 from models import AURANetS
 from train_yaml import add_train_method
 
-add_train_method(AURANetS)
+add_train_method()
 model = AURANetS(num_classes=9)
 
 # Full training
@@ -320,10 +374,13 @@ model.train_model(
 ### **Step 3: Fine-tune với L (nếu còn thời gian)**
 
 ```python
+import sys
+sys.path.insert(0, '/kaggle/working/AURA-NET')
+
 from models import AURANetL
 from train_yaml import add_train_method
 
-add_train_method(AURANetL)
+add_train_method()
 model = AURANetL(num_classes=9)
 
 # Fine-tune for best accuracy
@@ -340,7 +397,32 @@ model.train_model(
 
 ## 🐛 Common Issues
 
-### **1. Out of Memory (OOM)**
+### **1. ModuleNotFoundError: No module named 'models'**
+
+**Cause:** Chưa thêm AURA-NET vào sys.path
+
+**Solution:**
+```python
+import sys
+sys.path.insert(0, '/kaggle/working/AURA-NET')  # Add this FIRST!
+
+from models import AURANetTiny  # Then import
+```
+
+### **2. TypeError: add_train_method() takes 0 positional arguments**
+
+**Cause:** Truyền tham số vào `add_train_method()`
+
+**Solution:**
+```python
+# ❌ Wrong
+add_train_method(AURANetTiny)
+
+# ✅ Correct
+add_train_method()  # No arguments!
+```
+
+### **3. Out of Memory (OOM)**
 
 **Solution:** Giảm batch size hoặc chuyển sang variant nhỏ hơn
 
@@ -352,19 +434,16 @@ model.train_model(batch=16, ...)
 model.train_model(batch=8, ...)  # Hoặc batch=4
 ```
 
-### **2. Training quá chậm**
+### **4. Training quá chậm**
 
 **Solution:** Chuyển sang variant nhỏ hơn
 
 ```python
 # Thay vì AURANetM
 from models import AURANetS  # Hoặc AURANetTiny
-
-add_train_method(AURANetS)
-model = AURANetS(num_classes=9)
 ```
 
-### **3. Kaggle timeout (9 hours)**
+### **5. Kaggle timeout (9 hours)**
 
 **Solution:** 
 - Sử dụng Tiny hoặc S
@@ -384,15 +463,22 @@ model.train_model(
 ## 📚 Complete Example
 
 ```python
-# Import
+import sys
+
+# Step 1: Add to path
+sys.path.insert(0, '/kaggle/working/AURA-NET')
+
+# Step 2: Import
 from models import AURANetTiny
 from train_yaml import add_train_method
 
-# Setup
-add_train_method(AURANetTiny)
+# Step 3: Setup
+add_train_method()
+
+# Step 4: Create model
 model = AURANetTiny(num_classes=9)
 
-# Train
+# Step 5: Train
 model.train_model(
     data="/kaggle/input/datasets/kcnttngotruongan/bccd-new/data.yaml",
     epochs=250,
@@ -410,7 +496,7 @@ model.train_model(
     save_period=10     # Save checkpoints
 )
 
-# Inference
+# Step 6: Inference
 import torch
 from PIL import Image
 import torchvision.transforms as T
@@ -437,11 +523,12 @@ print(f"Detected {len(predictions[0]['boxes'])} objects")
 
 **Cho Kaggle Free GPU (T4 - 16GB):**
 
-1. **Quick test**: Nano (2-3h)
-2. **Best choice**: Tiny (3-4h) ⭐
-3. **Good balance**: S (4-5h)
-4. **High accuracy**: M (6-8h)
-5. **Maximum accuracy**: L (10-12h) ⚠️
+1. **⚠️ IMPORTANT**: Thêm `sys.path.insert(0, '/kaggle/working/AURA-NET')` trước khi import
+2. **Quick test**: Nano (2-3h)
+3. **Best choice**: Tiny (3-4h) ⭐
+4. **Good balance**: S (4-5h)
+5. **High accuracy**: M (6-8h)
+6. **Maximum accuracy**: L (10-12h) ⚠️
 
 **Khuyến nghị:** Bắt đầu với **AURANetTiny** cho Kaggle!
 

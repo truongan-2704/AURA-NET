@@ -10,15 +10,20 @@ Fixes:
 - Better dataset checks
 - Uses num_classes from data.yaml
 - Computes mAP50 and mAP50-95 more properly than mAP50 * 0.7
+- Supports all AURA-NET variants (Nano, Tiny, S, M, L, X)
 
 Usage:
-    from models.v3 import AURANet
+    # Import any variant
+    from models import AURANetTiny  # or AURANet_Tiny, AURANetS, etc.
     from train_yaml import add_train_method
 
+    # Add train method to all variants
     add_train_method()
 
-    model = AURANet(num_classes=9)
+    # Create model
+    model = AURANetTiny(num_classes=9)
 
+    # Train
     model.train_model(
         data="/kaggle/input/datasets/kcnttngotruongan/bccd-new/data.yaml",
         epochs=200,
@@ -30,8 +35,8 @@ Usage:
         patience=60,
         seed=42,
         project="runs/train",
-        name="exp",
-        workers=2
+        name="auranet_tiny_bccd",
+        workers=4
     )
 """
 
@@ -863,31 +868,31 @@ def train_model(
 
 def add_train_method():
     """
-    Add train_model method to AURANet.
+    Add train_model method to all AURA-NET variants.
     Does NOT override PyTorch model.train().
     """
-    from models.v3 import AURANet
-    AURANet.train_model = train_model
+    from models.variants import AURANetBase
+    AURANetBase.train_model = train_model
 
 
 if __name__ == "__main__":
-    from models.v3 import AURANet
+    from models import AURANetTiny
 
     add_train_method()
 
-    model = AURANet(num_classes=9)
+    model = AURANetTiny(num_classes=9)
 
     model.train_model(
         data="/kaggle/input/datasets/kcnttngotruongan/bccd-new/data.yaml",
         epochs=200,
-        batch=8,
+        batch=24,
         imgsz=640,
         device=0,
         optimizer="AdamW",
-        lr0=1e-4,
-        patience=60,
+        lr0=2e-4,
+        patience=70,
         seed=42,
         project="runs/train",
-        name="exp",
-        workers=2,
+        name="auranet_tiny_bccd",
+        workers=4,
     )
