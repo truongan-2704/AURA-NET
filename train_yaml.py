@@ -444,32 +444,35 @@ def train_model(
 
     # Get absolute paths
     if 'path' in data_config and data_config['path']:
-        # If path is absolute
-        if Path(data_config['path']).is_absolute():
-            data_root = Path(data_config['path'])
+        path_value = data_config['path']
+        # Handle relative paths like '.' or '..'
+        if path_value in ['.', './']:
+            data_root = data_path
+        elif Path(path_value).is_absolute():
+            data_root = Path(path_value)
         else:
-            data_root = data_path / data_config['path']
+            data_root = (data_path / path_value).resolve()
     else:
         # Use yaml file directory as root
-        data_root = data_path
+        data_root = data_path.resolve()
 
     # Parse train path
     train_path = data_config['train']
     if 'images' in train_path:
-        train_img_dir = data_root / train_path
-        train_label_dir = data_root / train_path.replace('images', 'labels')
+        train_img_dir = (data_root / train_path).resolve()
+        train_label_dir = (data_root / train_path.replace('images', 'labels')).resolve()
     else:
-        train_img_dir = data_root / train_path / 'images'
-        train_label_dir = data_root / train_path / 'labels'
+        train_img_dir = (data_root / train_path / 'images').resolve()
+        train_label_dir = (data_root / train_path / 'labels').resolve()
 
     # Parse val path
     val_path = data_config['val']
     if 'images' in val_path:
-        val_img_dir = data_root / val_path
-        val_label_dir = data_root / val_path.replace('images', 'labels')
+        val_img_dir = (data_root / val_path).resolve()
+        val_label_dir = (data_root / val_path.replace('images', 'labels')).resolve()
     else:
-        val_img_dir = data_root / val_path / 'images'
-        val_label_dir = data_root / val_path / 'labels'
+        val_img_dir = (data_root / val_path / 'images').resolve()
+        val_label_dir = (data_root / val_path / 'labels').resolve()
 
     print(f"  Data root: {data_root}")
     print(f"  Train images: {train_img_dir}")
