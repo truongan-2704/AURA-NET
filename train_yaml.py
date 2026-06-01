@@ -152,7 +152,7 @@ def print_training_header(config, data_config, device, save_dir):
     print(f"{'Learning Rate':<30} {config.get('lr0', 1e-4):<70}")
     print(f"{'Patience':<30} {config['patience']:<70}")
     print(f"{'Seed':<30} {config['seed']:<70}")
-    print(f"{'Dataset':<30} {data_config['path']:<70}")
+    print(f"{'Dataset':<30} {data_config.get('path', 'N/A'):<70}")
     print(f"{'Classes':<30} {data_config['nc']:<70}")
     print(f"{'Class Names':<30} {', '.join(data_config['names']):<70}")
     print(f"{'Save Directory':<30} {str(save_dir):<70}")
@@ -413,7 +413,12 @@ def train_model(
 
     # Load data config
     data_config = load_yaml_config(data)
-    data_path = Path(data).parent
+
+    # Get data path (from yaml or from file location)
+    if 'path' in data_config:
+        data_path = Path(data_config['path'])
+    else:
+        data_path = Path(data).parent
 
     # Create save directory
     save_dir = Path(project) / name
@@ -436,11 +441,24 @@ def train_model(
 
     # Create datasets
     print("\nLoading datasets...")
-    train_img_dir = data_path / data_config['train'].replace('images', '').strip('/') / 'images'
-    train_label_dir = data_path / data_config['train'].replace('images', 'labels')
 
-    val_img_dir = data_path / data_config['val'].replace('images', '').strip('/') / 'images'
-    val_label_dir = data_path / data_config['val'].replace('images', 'labels')
+    # Parse train path
+    train_path = data_config['train']
+    if 'images' in train_path:
+        train_img_dir = data_path / train_path
+        train_label_dir = data_path / train_path.replace('images', 'labels')
+    else:
+        train_img_dir = data_path / train_path / 'images'
+        train_label_dir = data_path / train_path / 'labels'
+
+    # Parse val path
+    val_path = data_config['val']
+    if 'images' in val_path:
+        val_img_dir = data_path / val_path
+        val_label_dir = data_path / val_path.replace('images', 'labels')
+    else:
+        val_img_dir = data_path / val_path / 'images'
+        val_label_dir = data_path / val_path / 'labels'
 
     train_dataset = YOLODataset(train_img_dir, train_label_dir, imgsz, augment=True)
     val_dataset = YOLODataset(val_img_dir, val_label_dir, imgsz, augment=False)
